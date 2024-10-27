@@ -1,25 +1,25 @@
-// src/Login.tsx
+// src/Register.tsx
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from './firebaseconfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseconfig';
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert('Login Successful');
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert('Registration Successful');
     } catch (error) {
-      console.error("Error logging in:", error);
+      console.error("Error registering:", error);
       alert((error as Error).message);
     }
   };
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Register</h2>
       <input
         type="email"
         value={email}
@@ -32,10 +32,10 @@ const Login: React.FC = () => {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
       />
-      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleRegister}>Register</button>
     </div>
   );
 };
 
-export default Login;
+export default Register;
 export {};
