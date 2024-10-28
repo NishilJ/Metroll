@@ -1,4 +1,4 @@
-// TripPlanner.tsx
+// Worked on by Yoel
 import React, { useState, useEffect, useRef } from 'react';
 import { Flex, TextField, Button, View, Heading } from '@adobe/react-spectrum';
 import './TripPlanner.css'; // Import custom CSS for styling
