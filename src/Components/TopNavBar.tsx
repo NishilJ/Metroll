@@ -1,5 +1,5 @@
 import React from 'react';
-import {Flex, Heading, MenuTrigger, ActionButton, Menu, Item} from '@adobe/react-spectrum';
+import { Flex, Heading, MenuTrigger, ActionButton, Menu, Item } from '@adobe/react-spectrum';
 
 const TopNavBar: React.FC = () => {
     return (

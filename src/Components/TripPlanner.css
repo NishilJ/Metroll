@@ -1,0 +1,32 @@
+.autocomplete-container {
+  position: relative;
+}
+
+.suggestions {
+  border: 1px solid #ccc; /* Optional: Add border for better visibility */
+  background-color: white; /* Background color for the dropdown */
+  z-index: 1000; /* Make sure it's on top of other elements */
+  max-height: 200px; /* Optional: Limit the height */
+  overflow-y: auto; /* Optional: Add scroll if there are many items */
+}
+
+.suggestion-item {
+  padding: 8px; /* Padding for each suggestion item */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  color: black; /* Set text color to black */
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0; /* Change background on hover */
+}
+
+.map-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.full-map {
+    height: 400px; /* or another height as needed */
+    width: 100%;
+}
