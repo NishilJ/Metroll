@@ -1,9 +1,11 @@
 import React from 'react';
-import TopNavBar from './Components/TopNavBar';
+import TopNavBar from '../components/TopNavBar';
 import {Provider, defaultTheme, Grid, View} from "@adobe/react-spectrum";
-import TransitBar from "./Components/TransitBar";
+import TransitBar from "../components/TransitBar";
 
-function Home() {
+// Nishil
+// Arranges home page layout using react-spectrum and grid
+const HomePage: React.FC = () => {
     return (
         <Provider theme={defaultTheme}>
             <Grid
@@ -32,4 +34,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default HomePage;
