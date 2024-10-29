@@ -9,7 +9,7 @@ const TripPlanner: React.FC = () => {
   const [tripDetails, setTripDetails] = useState<any>(null);
   const [startSuggestions, setStartSuggestions] = useState<string[]>([]);
   const [endSuggestions, setEndSuggestions] = useState<string[]>([]);
-  
+
   // Refs for suggestion containers
   const startSuggestionsRef = useRef<HTMLDivElement>(null);
   const endSuggestionsRef = useRef<HTMLDivElement>(null);
@@ -101,9 +101,9 @@ const TripPlanner: React.FC = () => {
             {startSuggestions.length > 0 && (
               <div className="suggestions">
                 {startSuggestions.map((suggestion, index) => (
-                  <div 
-                    key={index} 
-                    className="suggestion-item" 
+                  <div
+                    key={index}
+                    className="suggestion-item"
                     onClick={() => {
                       setStartLocation(suggestion);
                       setStartSuggestions([]); // Clear suggestions on selection
@@ -126,9 +126,9 @@ const TripPlanner: React.FC = () => {
             {endSuggestions.length > 0 && (
               <div className="suggestions">
                 {endSuggestions.map((suggestion, index) => (
-                  <div 
-                    key={index} 
-                    className="suggestion-item" 
+                  <div
+                    key={index}
+                    className="suggestion-item"
                     onClick={() => {
                       setEndLocation(suggestion);
                       setEndSuggestions([]); // Clear suggestions on selection

@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import TopNavBar from './Components/TopNavBar';
+import TopNavBar from '../components/TopNavBar';
 import { Provider, defaultTheme, Grid, View } from '@adobe/react-spectrum';
-import TransitBar from "./Components/TransitBar";
-import TripPlanner from './Components/TripPlanner';
+import TransitBar from "../components/TransitBar";
+import TripPlanner from '../components/TripPlanner';
 
-function Home() {
+// Nishil
+// Arranges home page layout using react-spectrum and grid
+const HomePage: React.FC = () => {
     const [selectedView, setSelectedView] = useState('planner');
 
     return (
         <Provider theme={defaultTheme}>
             <Grid
                 areas={[
-                    'header  header',
-                    'subheader  subheader',
+                    'header header',
+                    'subheader subheader',
                     'sidebar content',
                     'footer  footer'
                 ]}
@@ -40,4 +42,6 @@ function Home() {
     );
 }
 
-export default Home;
+export default HomePage;
+
+
