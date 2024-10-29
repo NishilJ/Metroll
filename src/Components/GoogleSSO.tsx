@@ -3,7 +3,8 @@ import React from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebaseconfig';
 
-const GoogleSignIn: React.FC = () => {
+// Justin
+const GoogleSSO: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
@@ -21,4 +22,4 @@ const GoogleSignIn: React.FC = () => {
   );
 };
 
-export default GoogleSignIn;
+export default GoogleSSO;
