@@ -1,14 +1,24 @@
-// Worked on by Yoel
+// Worked on by Yoel and Nishil
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Flex, TextField, Button, View, Heading } from '@adobe/react-spectrum';
 import './TripPlanner.css'; // Import custom CSS for styling
 
 const TripPlanner: React.FC = () => {
+  interface SuggestionProps {
+    name: string;
+    lat: number;
+    lon: number;
+    id: string;
+  }
+
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
   const [tripDetails, setTripDetails] = useState<any>(null);
-  const [startSuggestions, setStartSuggestions] = useState<string[]>([]);
-  const [endSuggestions, setEndSuggestions] = useState<string[]>([]);
+  const [startSuggestions, setStartSuggestions] = useState<SuggestionProps[]>([]);
+  const [endSuggestions, setEndSuggestions] = useState<SuggestionProps[]>([]);
+  const [startDetails, setStartDetails] = useState<{ lat: number; lon: number; id: string } | null>(null);
+  const [endDetails, setEndDetails] = useState<{ lat: number; lon: number; id: string } | null>(null);
 
   // Refs for suggestion containers
   const startSuggestionsRef = useRef<HTMLDivElement>(null);
@@ -16,9 +26,14 @@ const TripPlanner: React.FC = () => {
 
   // Fetch location suggestions (Station Guesser)
   const fetchLocationSuggestions = async (input: string) => {
-    const response = await fetch(`https://europe.motis-project.de/api/v1/geocode?text=${input}&language=en`);
-    const data = await response.json();
-    return data; // Assuming the API response contains the location names
+      const response = await fetch(`http://motis.metroll.live/api/v1/geocode?text=${input}`);
+      const data = await response.json();
+      return data.map((loc: { name: string; lat: number; lon: number; id: string }) => ({
+        name: loc.name,
+        lat: loc.lat,
+        lon: loc.lon,
+        id: loc.id,
+      }));
   };
 
   // Effect to fetch suggestions for start location
@@ -26,7 +41,7 @@ const TripPlanner: React.FC = () => {
     if (startLocation) {
       const getSuggestions = async () => {
         const suggestions = await fetchLocationSuggestions(startLocation);
-        setStartSuggestions(suggestions.map((loc: any) => loc.name)); // Adjust based on actual structure
+        setStartSuggestions(suggestions);
       };
       getSuggestions();
     } else {
@@ -39,7 +54,7 @@ const TripPlanner: React.FC = () => {
     if (endLocation) {
       const getSuggestions = async () => {
         const suggestions = await fetchLocationSuggestions(endLocation);
-        setEndSuggestions(suggestions.map((loc: any) => loc.name)); // Adjust based on actual structure
+        setEndSuggestions(suggestions);
       };
       getSuggestions();
     } else {
@@ -49,21 +64,25 @@ const TripPlanner: React.FC = () => {
 
   // Fetch trip itinerary using MOTIS
   const fetchTripItinerary = async () => {
-    if (!startLocation || !endLocation) {
-      alert('Please enter both start and end locations');
+
+    if (!startDetails?.id || !endDetails?.id) {
+      alert('Please select a valid start and end location');
       return;
     }
 
-    // Placeholder for actual coordinates
-    const fromCoordinates = '48.8534951,2.3483915'; // Replace with actual coordinates of startLocation
-    const toCoordinates = 'eu-blablacar-bus_XCA'; // Replace with actual coordinates of endLocation
-
-    const response = await fetch(`https://europe.motis-project.de/api/v1/plan?time=2024-10-28T01%3A22%3A00.000Z&fromPlace=${fromCoordinates}&toPlace=${toCoordinates}&arriveBy=false&timetableView=true&wheelchair=false&mode=TRANSIT,WALK`, {
-      method: 'GET',
-    });
+    // Fetch trip details if ids are valid
+    const response = await fetch(
+        `http://motis.metroll.live/api/v1/plan?time=2024-10-28T01%3A22%3A00.000Z&fromPlace=${startDetails.id}&toPlace=${endDetails.id}&arriveBy=false&timetableView=true&wheelchair=false&mode=TRANSIT,WALK`,
+        { method: 'GET' }
+    );
 
     const data = await response.json();
-    setTripDetails(data); // Display the trip data
+    if (data) {
+      setTripDetails(data); // Set trip details if data is valid
+    } else {
+      setTripDetails(null); // Clear trip details if no valid trip data is found
+    }
+
   };
 
   // Handle clicks outside of suggestion boxes to close them
@@ -93,8 +112,8 @@ const TripPlanner: React.FC = () => {
         <Flex direction="column" gap="size-200">
           <div className="autocomplete-container" ref={startSuggestionsRef}>
             <TextField
-              label="Start Location"
-              placeholder="Enter starting point"
+
+              placeholder="Origin"
               value={startLocation}
               onChange={setStartLocation}
             />
@@ -105,11 +124,12 @@ const TripPlanner: React.FC = () => {
                     key={index}
                     className="suggestion-item"
                     onClick={() => {
-                      setStartLocation(suggestion);
+                      setStartLocation(suggestion.name);
+                      setStartDetails({ lat: suggestion.lat, lon: suggestion.lon, id: suggestion.id });
                       setStartSuggestions([]); // Clear suggestions on selection
                     }}
                   >
-                    {suggestion}
+                    {suggestion.name}
                   </div>
                 ))}
               </div>
@@ -118,8 +138,8 @@ const TripPlanner: React.FC = () => {
 
           <div className="autocomplete-container" ref={endSuggestionsRef}>
             <TextField
-              label="Destination"
-              placeholder="Enter destination"
+              //label="Destination"
+              placeholder="Destination"
               value={endLocation}
               onChange={setEndLocation}
             />
@@ -130,11 +150,12 @@ const TripPlanner: React.FC = () => {
                     key={index}
                     className="suggestion-item"
                     onClick={() => {
-                      setEndLocation(suggestion);
+                      setEndLocation(suggestion.name);
+                      setEndDetails({ lat: suggestion.lat, lon: suggestion.lon, id: suggestion.id });
                       setEndSuggestions([]); // Clear suggestions on selection
                     }}
                   >
-                    {suggestion}
+                    {suggestion.name}
                   </div>
                 ))}
               </div>
@@ -152,10 +173,8 @@ const TripPlanner: React.FC = () => {
         <Heading level={3}>Trip Details</Heading>
         {tripDetails && (
           <View>
-            {/* Display a simple message instead of the full details */}
-            <p>Trip info found.</p>
-            {/* Uncomment the line below to see the detailed trip info again if needed */}
-            {/* <pre>{JSON.stringify(tripDetails, null, 2)}</pre> */}
+            {/* testing if working */}
+            {<pre>{JSON.stringify(tripDetails, null, 2)}</pre>}
           </View>
         )}
       </View>
