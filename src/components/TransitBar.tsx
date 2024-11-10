@@ -18,9 +18,9 @@ const TransitBar: React.FC<TransitBarProps> = ({ onSelect }) => {
                     }
                 }}
             >
-                <Item key="departures">Departures</Item>
-                <Item key="planner">Trip Planner</Item>
-                <Item key="routes">Routes</Item>
+                <Item href="/departures" key="departures">Departures</Item>
+                <Item href="/plan" key="planner">Trip Planner</Item>
+                <Item href="/routes" key="routes">Routes</Item>
             </ActionGroup>
         </Flex>
     );
