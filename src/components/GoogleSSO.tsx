@@ -2,6 +2,8 @@
 import React from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebaseconfig';
+import { Button, Box } from '@mui/material';
+import { GoogleIcon} from './customicons';
 
 // Justin
 const GoogleSSO: React.FC = () => {
@@ -16,9 +18,16 @@ const GoogleSSO: React.FC = () => {
   };
 
   return (
-    <button onClick={handleGoogleSignIn}>
-      Sign in with Google
-    </button>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Button
+        fullWidth
+        variant="outlined"
+        onClick={handleGoogleSignIn}
+        startIcon={<GoogleIcon />}
+      >
+        Sign in with Google
+      </Button>
+    </Box>
   );
 };
 

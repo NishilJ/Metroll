@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseconfig';
+import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 
 // Justin
 const Login: React.FC = () => {
@@ -19,22 +20,29 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <button onClick={handleLogin}>Login</button>
-    </div>
+    <Container maxWidth="xs" sx={{ mt: 4 }}>
+      <Stack spacing={2} alignItems="center">
+        <Typography variant="h5">Login</Typography>
+        <TextField
+          label="Email"
+          variant="outlined"
+          fullWidth
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          label="Password"
+          type="password"
+          variant="outlined"
+          fullWidth
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button variant="contained" color="primary" onClick={handleLogin} fullWidth>
+          Login
+        </Button>
+      </Stack>
+    </Container>
   );
 };
 
