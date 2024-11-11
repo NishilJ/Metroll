@@ -1,20 +1,41 @@
 import React, { useState } from 'react';
 
-// Syed
 const Routes: React.FC = () => {
   const [routeNumber, setRouteNumber] = useState<string>('');
   const [routeDetails, setRouteDetails] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleRouteSubmit = () => {
-    if (routeNumber) {
-      setRouteDetails(`Here are the details for Route ${routeNumber}.`);
-    } else {
+  const handleRouteSubmit = async () => {
+    if (!routeNumber) {
       alert('Please enter a route number.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setRouteDetails(null);
+
+    try {
+      // Ask the API for the route number, this is just a placeholder for now
+      const response = await fetch(`https://europe.motis-project.de=${routeNumber}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch route details.');
+      }
+
+      const data = await response.json();
+      // Assuming the API returns an object with a `description` field for the route
+      setRouteDetails(data.description);
+    } catch (error) {
+      setError('Could not retrieve route details. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div style={{ maxWidth: '300px', margin: '0 auto', padding: '1em' }}>
+      {/* Input Field */}
       <div style={{ position: 'relative', marginBottom: '1em' }}>
         <input
           type="text"
@@ -56,9 +77,29 @@ const Routes: React.FC = () => {
         </div>
       </div>
 
+      {/* Loading Indicator */}
+      {loading && <p style={{ color: '#888', textAlign: 'center' }}>Loading route details...</p>}
+
+      {/* Error Message */}
+      {error && (
+        <div style={{ color: '#D9534F', textAlign: 'center', marginTop: '1em' }}>
+          {error}
+        </div>
+      )}
+
+      {/* Route Details */}
       {routeDetails && (
-        <div style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '0.5em' }}>
-          <p>{routeDetails}</p>
+        <div
+          style={{
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            padding: '1em',
+            backgroundColor: '#f9f9f9',
+            marginTop: '1em',
+          }}
+        >
+          <h4 style={{ margin: '0 0 0.5em 0', fontSize: '1em', fontWeight: 'bold' }}>Route Description</h4>
+          <p style={{ margin: '0', fontSize: '0.9em', color: '#333' }}>{routeDetails}</p>
         </div>
       )}
     </div>
