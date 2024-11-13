@@ -78,6 +78,7 @@ const TripPlanner: React.FC = () => {
     const [toPlace, setToPlace] = useState<Place | null>(null);
     const [trips, setTrips] = useState<Trip[]>([]);
     const [showTrips, setShowTrips] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const fromPlaceSuggestions = usePlaceSuggestions();
     const toPlaceSuggestions = usePlaceSuggestions();
@@ -85,9 +86,16 @@ const TripPlanner: React.FC = () => {
     const HandlePlanTripButton = async () => {
         if (fromPlace && toPlace) {
             const result = await getTripSuggestions(fromPlace, toPlace);
-            setTrips(result.items);
-            setShowTrips(true);
+            if (result.items.length === 0) {
+                setError("No trips found.");
+            } else {
+                setTrips(result.items);
+                setError(null);
+            }
+        } else {
+            setError("Please fill in both the origin and destination fields.");
         }
+        setShowTrips(true);
     };
 
     return (
@@ -139,6 +147,9 @@ const TripPlanner: React.FC = () => {
             {/* Display Trip Suggestions */}
             {showTrips && (
                 <View backgroundColor="gray-50" padding="size-300" width="size-4600" marginX="auto" borderRadius="medium">
+                    {error ? (
+                        <Text>{error}</Text>
+                    ) : (
                         <ListBox aria-label="Trip Suggestions" items={trips} selectionMode="single">
                                 {(item) => (
                                     <Item key={`${item.startTime}-${item.endTime}`}>
@@ -147,6 +158,7 @@ const TripPlanner: React.FC = () => {
                                     </Item>
                                 )}
                         </ListBox>
+                    )}
                 </View>
             )}
         </Flex>
