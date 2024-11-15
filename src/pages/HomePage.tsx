@@ -3,6 +3,7 @@ import TopNavBar from '../components/TopNavBar';
 import { Provider, defaultTheme, Grid, View } from '@adobe/react-spectrum';
 import TransitBar from "../components/TransitBar";
 import TripPlanner from '../components/TripPlanner';
+import Departures from "../components/Departures";
 
 // Nishil
 // Arranges home page layout using react-spectrum and grid
@@ -31,6 +32,7 @@ const HomePage: React.FC = () => {
                 </View>
                 <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="content">
                     {selectedView === 'planner' && <TripPlanner />}
+                    {selectedView === 'departures' && <Departures />}
                 </View>
                 <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="footer" />
             </Grid>

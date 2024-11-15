@@ -151,6 +151,8 @@ const TripPlanner: React.FC = () => {
         <Flex direction="row" gap="size-200" justifyContent="center">
             <Flex direction="column" justifyContent="space-between" gap="size-200">
                 <View backgroundColor="gray-50" padding="size-300" marginX="auto" borderRadius="medium">
+                    <Heading level={3}>Trip Planner</Heading>
+                    <Divider marginBottom="size-200" />
                     <Flex gap="size-100" direction="column" width="size-6000">
                         {/* Start Location ComboBox */}
                         <ComboBox

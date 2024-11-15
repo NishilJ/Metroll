@@ -111,7 +111,7 @@ const Departures: React.FC = () => {
 
     return (
         <Flex direction="column" alignItems="center" gap="size-200">
-            <View backgroundColor="gray-100" padding="size-300" borderRadius="medium" width="size-6000">
+            <View backgroundColor="gray-50" padding="size-300" borderRadius="medium" width="size-6000">
                 <Heading level={3}>Stop Departures</Heading>
                 <Divider marginBottom="size-200" />
 

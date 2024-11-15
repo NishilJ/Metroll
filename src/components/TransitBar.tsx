@@ -12,15 +12,15 @@ const TransitBar: React.FC<TransitBarProps> = ({ onSelect }) => {
                 selectionMode="single"
                 width="fit-content"
                 defaultSelectedKeys={['planner']}
-                onSelectionChange={(key) => {
+                onSelectionChange={(selected) => {
+                    const key = Array.from(selected)[0] as string; // Correctly extract and cast the selected key
                     if (key) {
-                        onSelect(key.toString()); // Pass the selected key to onSelect
+                        onSelect(key); // Pass the selected key to onSelect
                     }
                 }}
             >
-                <Item href="/departures" key="departures">Departures</Item>
-                <Item href="/plan" key="planner">Trip Planner</Item>
-                <Item href="/routes" key="routes">Routes</Item>
+                <Item key="departures">Departures</Item>
+                <Item key="planner">Trip Planner</Item>
             </ActionGroup>
         </Flex>
     );
