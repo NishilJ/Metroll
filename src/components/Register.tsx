@@ -5,7 +5,7 @@ import { auth } from '../firebaseconfig';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 
-// Justin
+// Justin & Syed
 const Register: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
