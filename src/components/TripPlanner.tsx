@@ -9,9 +9,9 @@ import {
     useAsyncList,
     ListBox,
     Text,
-    Tabs,
-    TabList,
-    TabPanels, Content, Heading, Divider
+    Content,
+    Heading,
+    Divider
 } from '@adobe/react-spectrum';
 import {wait} from "@testing-library/user-event/dist/utils";
 
