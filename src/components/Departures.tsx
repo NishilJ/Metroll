@@ -10,7 +10,6 @@ import {
     Divider,
     useAsyncList,
 } from '@adobe/react-spectrum';
-import moment from 'moment';
 
 interface Stop {
     id: string;
@@ -54,7 +53,7 @@ const fetchNearbyStations = async (latitude: number, longitude: number) => {
 // Function to fetch departures for a given stop
 const fetchDepartures = async (stopId: string) => {
     const res = await fetch(
-        `http://motis.metroll.live/api/v1/stoptimes?stopId=${stopId}&time=${new Date().toISOString()}&arriveBy=false&n=10`
+        `http://motis.metroll.live/api/v1/stoptimes?stopId=${stopId}&arriveBy=false&n=10`
     );
     const data = await res.json();
     return data.stopTimes || [];
@@ -108,7 +107,7 @@ const Departures: React.FC = () => {
         }
     };
 
-    const formatTime = (time: string) => moment.utc(time).local().format('DD/MM/YYYY HH:mm:ss');
+    //const formatTime = (time: string) => utc(time).local().format('DD/MM/YYYY HH:mm:ss');
 
     return (
         <Flex direction="column" alignItems="center" gap="size-200">
@@ -150,7 +149,7 @@ const Departures: React.FC = () => {
                             <Text>
                                 <strong>Route:</strong> {departure.routeShortName} <br />
                                 <strong>Headsign:</strong> {departure.headsign} <br />
-                                <strong>Departure:</strong> {formatTime(departure.departure)}
+                                <strong>Departure:</strong> {departure.departure}
                             </Text>
                             <Divider size="S" marginTop="size-150" />
                         </View>
