@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseconfig';
 import { useNavigate } from 'react-router-dom';
+import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 
-// Justin
+// Justin & Syed
 const Register: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -21,22 +22,29 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <button onClick={handleRegister}>Register</button>
-    </div>
+    <Container maxWidth="xs" sx={{ mt: 4 }}>
+      <Stack spacing={2} alignItems="center">
+        <Typography variant="h5">Register</Typography>
+        <TextField
+          label="Email"
+          variant="outlined"
+          fullWidth
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          label="Password"
+          type="password"
+          variant="outlined"
+          fullWidth
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button variant="contained" color="primary" onClick={handleRegister} fullWidth>
+          Register
+        </Button>
+      </Stack>
+    </Container>
   );
 };
 
