@@ -15,10 +15,10 @@ const HomePage: React.FC = () => {
                 areas={[
                     'header header',
                     'subheader subheader',
-                    'sidebar content',
+                    'content content',
                     'footer  footer'
                 ]}
-                columns={['1fr', '2fr']}
+                columns={['1fr', '1fr']}
                 rows={['size-1000', "size-1000", '1fr', 'size-1000']}
                 height="100vh"
                 gap="size-0"
@@ -29,12 +29,8 @@ const HomePage: React.FC = () => {
                 <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="subheader">
                     <TransitBar onSelect={setSelectedView} />
                 </View>
-                <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="sidebar">
-                    {/* Sidebar can contain additional content if needed */}
-                    {selectedView === 'planner' && <TripPlanner />}
-                </View>
                 <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="content">
-                    {/* Other content can be placed here */}
+                    {selectedView === 'planner' && <TripPlanner />}
                 </View>
                 <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="footer" />
             </Grid>
