@@ -20,6 +20,10 @@
         "destination": "/index.html"
       },
       {
+        "source": "/account",
+        "destination": "/index.html"
+      },
+      {
         "source": "/",
         "destination": "/index.html"
       },
