@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { updateProfile, updateEmail } from 'firebase/auth';
+import { updateProfile, updateEmail, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../firebaseconfig';
 import {
     Button,
@@ -12,7 +12,7 @@ import {
     defaultTheme
 } from '@adobe/react-spectrum';
 
-const AccountUpdate: React.FC = () => {
+const AccountPage: React.FC = () => {
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
@@ -40,6 +40,7 @@ const AccountUpdate: React.FC = () => {
                 // Update email
                 if (email !== user.email) {
                     await updateEmail(user, email);
+                    await sendEmailVerification(user);
                 }
 
                 alert('Account information updated successfully.');
@@ -85,4 +86,4 @@ const AccountUpdate: React.FC = () => {
     );
 };
 
-export default AccountUpdate;
+export default AccountPage;

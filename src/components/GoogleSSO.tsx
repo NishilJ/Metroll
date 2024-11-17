@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebaseconfig';
 import { Button, Box } from '@mui/material';
-import { GoogleIcon } from './customicons';
+import { GoogleIcon } from './CustomIcons';
 
 // Justin & Syed
 const GoogleSSO: React.FC = () => {
