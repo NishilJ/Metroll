@@ -16,7 +16,7 @@ const AccountPage: React.FC = () => {
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
-    const [phone, setPhone] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
 
     useEffect(() => {
         const user = auth.currentUser;
@@ -74,10 +74,10 @@ const AccountPage: React.FC = () => {
                         onChange={setEmail}
                     />
                     <TextField
-                        label="Phone number"
-                        type="tel"
-                        value={phone}
-                        onChange={setPhone}
+                        label="Password"
+                        type="password"
+                        value={password}
+                        onChange={setPassword}
                     />
                     <Button variant="cta" onPress={handleUpdate}>Update</Button>
                 </Flex>
