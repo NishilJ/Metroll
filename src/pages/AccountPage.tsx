@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { updateProfile, updateEmail, sendEmailVerification } from 'firebase/auth';
+import { updateProfile, updateEmail, updatePassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../firebaseconfig';
 import {
     Button,
@@ -43,6 +43,12 @@ const AccountPage: React.FC = () => {
                     await sendEmailVerification(user);
                 }
 
+                // Update password if a new password is provided
+                if (password) {
+                    await updatePassword(user, password);
+                    alert('Password updated successfully.');
+                }
+
                 alert('Account information updated successfully.');
             } catch (error) {
                 console.error("Error updating account information:", error);
@@ -74,10 +80,11 @@ const AccountPage: React.FC = () => {
                         onChange={setEmail}
                     />
                     <TextField
-                        label="Password"
+                        label="New Password"
                         type="password"
                         value={password}
                         onChange={setPassword}
+                        placeholder="Leave blank to keep current password"
                     />
                     <Button variant="cta" onPress={handleUpdate}>Update</Button>
                 </Flex>
