@@ -15,7 +15,7 @@ import {
   Provider,
   defaultTheme,
 } from "@adobe/react-spectrum";
-// Import Firebase auth from the modularized config
+
 import { auth } from "../firebase/firebaseConfig";
 
 const AccountPage: React.FC = () => {
