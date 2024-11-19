@@ -1,96 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import { updateProfile, updateEmail, updatePassword, sendEmailVerification } from 'firebase/auth';
-import { auth } from '../firebaseconfig';
+import React, { useState, useEffect } from "react";
 import {
-    Button,
-    TextField,
-    Heading,
-    View,
-    Flex,
-    Divider,
-    Provider,
-    defaultTheme
-} from '@adobe/react-spectrum';
+  updateProfile,
+  updateEmail,
+  updatePassword,
+  sendEmailVerification,
+  getAuth,
+} from "firebase/auth";
+import {
+  Button,
+  TextField,
+  Heading,
+  View,
+  Flex,
+  Divider,
+  Provider,
+  defaultTheme,
+} from "@adobe/react-spectrum";
+
 
 const AccountPage: React.FC = () => {
-    const [firstName, setFirstName] = useState<string>('');
-    const [lastName, setLastName] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-    useEffect(() => {
-        const user = auth.currentUser;
-        if (user) {
-            // Populate fields with the current user data
-            setFirstName(user.displayName?.split(' ')[0] || '');
-            setLastName(user.displayName?.split(' ')[1] || '');
-            setEmail(user.email || '');
+  // Initialize Firebase Authentication in useEffect
+  useEffect(() => {
+    const auth = getAuth(); // Initialize auth
+    const user = auth.currentUser;
+    if (user) {
+      setFirstName(user.displayName?.split(" ")[0] || "");
+      setLastName(user.displayName?.split(" ")[1] || "");
+      setEmail(user.email || "");
+    }
+  }, []);
+
+  const handleUpdate = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    // Check for empty fields before proceeding with update
+    if (!firstName || !lastName) {
+      alert("Please enter both first and last names.");
+      return;
+    }
+
+    if (!email) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    if (!password) {
+      alert("Please enter a new password.");
+      return;
+    }
+
+    // Proceed with update if fields are valid
+    if (user) {
+      try {
+        // Update display name
+        if (firstName && lastName && `${firstName} ${lastName}` !== user.displayName) {
+          await updateProfile(user, {
+            displayName: `${firstName} ${lastName}`,
+          });
         }
-    }, []);
 
-    const handleUpdate = async () => {
-        const user = auth.currentUser;
-        if (user) {
-            try {
-                // Update display name
-                await updateProfile(user, {
-                    displayName: `${firstName} ${lastName}`
-                });
-
-                // Update email
-                if (email !== user.email) {
-                    await updateEmail(user, email);
-                    await sendEmailVerification(user);
-                }
-
-                // Update password if a new password is provided
-                if (password) {
-                    await updatePassword(user, password);
-                    alert('Password updated successfully.');
-                }
-
-                alert('Account information updated successfully.');
-            } catch (error) {
-                console.error("Error updating account information:", error);
-                alert((error as Error).message);
-            }
-        }
-    };
-
-    return (
-        <Provider theme={defaultTheme}>
-            <View padding="size-300" width="size-4600">
-                <Heading level={2}>Account Settings</Heading>
-                <Divider marginBottom="size-300" />
-                <Flex direction="column" gap="size-200">
-                    <TextField
-                        label="First name"
-                        value={firstName}
-                        onChange={setFirstName}
-                    />
-                    <TextField
-                        label="Last name"
-                        value={lastName}
-                        onChange={setLastName}
-                    />
-                    <TextField
-                        label="Email address"
-                        type="email"
-                        value={email}
-                        onChange={setEmail}
-                    />
-                    <TextField
-                        label="New Password"
-                        type="password"
-                        value={password}
-                        onChange={setPassword}
-                        placeholder="Leave blank to keep current password"
-                    />
-                    <Button variant="cta" onPress={handleUpdate}>Update</Button>
-                </Flex>
-            </View>
-        </Provider>
-    );
-};
-
-export default AccountPage;
+        // Update email if it's different from the current one
