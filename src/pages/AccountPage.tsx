@@ -4,7 +4,6 @@ import {
   updateEmail,
   updatePassword,
   sendEmailVerification,
-  getAuth,
 } from "firebase/auth";
 import {
   Button,
@@ -16,7 +15,8 @@ import {
   Provider,
   defaultTheme,
 } from "@adobe/react-spectrum";
-
+// Import Firebase auth from the modularized config
+import { auth } from "../firebase/firebaseConfig";
 
 const AccountPage: React.FC = () => {
   const [firstName, setFirstName] = useState<string>("");
@@ -24,9 +24,7 @@ const AccountPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  // Initialize Firebase Authentication in useEffect
   useEffect(() => {
-    const auth = getAuth(); // Initialize auth
     const user = auth.currentUser;
     if (user) {
       setFirstName(user.displayName?.split(" ")[0] || "");
@@ -36,10 +34,8 @@ const AccountPage: React.FC = () => {
   }, []);
 
   const handleUpdate = async () => {
-    const auth = getAuth();
     const user = auth.currentUser;
 
-    // Check for empty fields before proceeding with update
     if (!firstName || !lastName) {
       alert("Please enter both first and last names.");
       return;
@@ -55,14 +51,64 @@ const AccountPage: React.FC = () => {
       return;
     }
 
-    // Proceed with update if fields are valid
     if (user) {
       try {
-        // Update display name
-        if (firstName && lastName && `${firstName} ${lastName}` !== user.displayName) {
+        if (`${firstName} ${lastName}` !== user.displayName) {
           await updateProfile(user, {
             displayName: `${firstName} ${lastName}`,
           });
         }
 
-        // Update email if it's different from the current one
+        if (email !== user.email) {
+          await updateEmail(user, email);
+          await sendEmailVerification(user);
+        }
+
+        await updatePassword(user, password);
+        alert("Account Updated!");
+      } catch (error) {
+        console.error("Error updating account:", error);
+        alert("An error occurred while updating the account.");
+      }
+    }
+  };
+
+  return (
+    <Provider theme={defaultTheme}>
+      <View padding="size-300" width="size-4600">
+        <Heading level={2}>Account Settings</Heading>
+        <Divider marginBottom="size-300" />
+        <Flex direction="column" gap="size-200">
+          <TextField
+            label="First name"
+            value={firstName}
+            onChange={setFirstName}
+          />
+          <TextField
+            label="Last name"
+            value={lastName}
+            onChange={setLastName}
+          />
+          <TextField
+            label="Email address"
+            type="email"
+            value={email}
+            onChange={setEmail}
+          />
+          <TextField
+            label="New Password"
+            type="password"
+            value={password}
+            onChange={setPassword}
+            isRequired
+          />
+          <Button variant="cta" onPress={handleUpdate}>
+            Update
+          </Button>
+        </Flex>
+      </View>
+    </Provider>
+  );
+};
+
+export default AccountPage;
