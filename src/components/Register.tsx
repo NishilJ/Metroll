@@ -17,7 +17,7 @@ const Register: React.FC = () => {
       alert('Passwords do not match');
       return;
     }
-    
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
