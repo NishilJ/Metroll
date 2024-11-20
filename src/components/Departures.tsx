@@ -206,7 +206,8 @@ const Departures: React.FC = () => {
         <Flex direction="row" gap="size-200" alignItems="start" wrap="nowrap" width="100%">
             {/* First box for the ComboBox and Buttons */}
             <View
-                backgroundColor="gray-100"
+                colorVersion={6}
+                backgroundColor="seafoam-100"
                 padding="size-300"
                 borderRadius="medium"
                 flex="1"
@@ -253,7 +254,8 @@ const Departures: React.FC = () => {
                 {/* Conditional rendering for Favorites section */}
                 {showFavoritesMenu && (
                     <View
-                        backgroundColor="gray-100"
+                        colorVersion={6}
+                        backgroundColor="seafoam-100"
                         padding="size-300"
                         borderRadius="medium"
                         marginTop="size-200"
@@ -284,7 +286,8 @@ const Departures: React.FC = () => {
 
             {/* Second box for departures information */}
             <View
-                backgroundColor="gray-100"
+                colorVersion={6}
+                backgroundColor="seafoam-100"
                 padding="size-300"
                 paddingTop="size-200"
                 borderRadius="medium"
@@ -337,7 +340,8 @@ const Departures: React.FC = () => {
                                 const arrivalTime = selectedStop.place?.arrival;
 
                                 return (
-                                    <View key={idx} marginBottom="size-200" padding="size-200" backgroundColor="gray-200" borderRadius="medium">
+                                    <View key={idx} marginBottom="size-200" padding="size-200" colorVersion={6}
+                                          backgroundColor="seafoam-300" borderRadius="medium">
                                         <Text>
                                             <strong>Route:</strong> {selectedStop.routeShortName} <br />
                                             <strong>Headsign:</strong> {selectedStop.headsign} <br />

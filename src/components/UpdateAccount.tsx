@@ -115,7 +115,8 @@ const UpdateAccount: React.FC = () => {
 
   return (
     <Flex justifyContent="center">
-      <View padding="size-300" backgroundColor="gray-50" width="size-4600" borderRadius="medium">
+      <View padding="size-300" colorVersion={6}
+            backgroundColor="seafoam-100" width="size-4600" borderRadius="medium">
         <Heading level={2}>Account Settings</Heading>
         <Divider marginBottom="size-300" />
         <Flex direction="column" gap="size-200">

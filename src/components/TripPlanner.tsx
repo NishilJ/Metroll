@@ -300,7 +300,8 @@ const TripPlanner: React.FC = () => {
 
                 {/* Display Trip Suggestions */}
                 {showTrips && (
-                    <View backgroundColor="gray-100" padding="size-300" width="size-6000" marginX="auto"
+                    <View colorVersion={6}
+                          backgroundColor="seafoam-100" padding="size-300" width="size-6000" marginX="auto"
                           borderRadius="medium">
                         {error ? (
                             <Text UNSAFE_style={{color: 'red'}}>{error}</Text>
@@ -330,7 +331,8 @@ const TripPlanner: React.FC = () => {
             <Flex direction="column" justifyContent="center">
                 {/* Display Trip Details */}
                 {showTripDetails && (
-                    <View backgroundColor="gray-100" padding="size-300" borderRadius="medium" width="size-6000"
+                    <View colorVersion={6}
+                          backgroundColor="seafoam-100" padding="size-300" borderRadius="medium" width="size-6000"
                           marginTop="size-300" maxHeight="size-8000" overflow="auto">
                         <Content>
                             <Heading level={4}>{fromPlace?.name} - {toPlace?.name}</Heading>
