@@ -15,7 +15,8 @@ const GoogleSSO: React.FC = () => {
       await signInWithPopup(auth, googleProvider);
       alert('Google Sign-In Successful');
       navigate('/'); // Redirect to homepage
-    } catch (error) {
+    } 
+    catch (error) {
       console.error("Error with Google Sign-In:", error);
       alert((error as Error).message);
     }
@@ -23,12 +24,7 @@ const GoogleSSO: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Button
-        fullWidth
-        variant="outlined"
-        onClick={handleGoogleSignIn}
-        startIcon={<GoogleIcon />}
-      >
+      <Button fullWidth variant="outlined" onClick={handleGoogleSignIn} startIcon={<GoogleIcon />}>
         Sign in with Google
       </Button>
     </Box>
