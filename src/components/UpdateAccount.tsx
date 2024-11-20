@@ -63,6 +63,7 @@ const UpdateAccount: React.FC = () => {
           });
           alert("Display name updated successfully!");
           changesMade = true;
+          window.location.reload();
         }
 
         if (email !== user.email && email !== "" && email != null) {
@@ -119,7 +120,7 @@ const UpdateAccount: React.FC = () => {
         <Divider marginBottom="size-300" />
         <Flex direction="column" gap="size-200">
           <TextField
-            label="Display Name"
+            label="Name"
             value={displayName}
             onChange={setDisplayName}
             placeholder={displayName}
