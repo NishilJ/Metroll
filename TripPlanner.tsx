@@ -166,24 +166,31 @@ const TripPlanner: React.FC = () => {
         // Handle case when selectedMoment is null or invalid (empty field)
         if (!selectedMoment || !selectedMoment.isValid()) {
             setError('Error: Please select a valid date.');
+            setShowTripDetails(false); // Hide trip details when error occurs
             return; // Early return if selectedMoment is invalid
         }
 
         // Handle case when fromPlace or toPlace is empty
         if (!fromPlace && !toPlace) {
             setError("Error: Please enter both origin and destination.");
+            setShowTripDetails(false); // Hide trip details when error occurs
         } else if (!fromPlace) {
             setError("Error: Please enter an origin.");
+            setShowTripDetails(false); // Hide trip details when error occurs
         } else if (!toPlace) {
             setError("Error: Please enter a destination.");
+            setShowTripDetails(false); // Hide trip details when error occurs
         } else if (selectedMoment.isBefore(currentTime)) {
             setError('Error: Selected time is in the past. Please choose a future time.');
+            setShowTripDetails(false); // Hide trip details when error occurs
         } else if (!isValidCustomDate(selectedMoment)) {
             setError('Error: Selected date is too far away. Please choose a closer time.');
+            setShowTripDetails(false); // Hide trip details when error occurs
         } else {
             // If everything is valid, proceed with the logic
             if (fromPlace.id === toPlace.id) {
                 setError("Origin and destination cannot be the same.");
+                setShowTripDetails(false); // Hide trip details when error occurs
             } else {
                 setIsLoading(true);
                 await wait(1000);
@@ -191,6 +198,7 @@ const TripPlanner: React.FC = () => {
 
                 if (result.items.length === 0) {
                     setError("No trips found. Please check if the two stops exist.");
+                    setShowTripDetails(false); // Hide trip details when error occurs
                 } else {
                     setError(null); // Clear any previous errors
                     setTrips(result.items);
@@ -201,6 +209,7 @@ const TripPlanner: React.FC = () => {
         setIsLoading(false);
         setShowTrips(true);
     };
+
 
 
 
@@ -234,8 +243,8 @@ const TripPlanner: React.FC = () => {
 
     return (
         <Flex direction="row" gap="size-200" justifyContent="center">
-            <Flex direction="column" justifyContent="space-between" gap="size-200">
-                <View backgroundColor="gray-100" padding="size-300" marginX="auto" borderRadius="medium">
+            <Flex direction="column" justifyContent="space-between" gap="size-200" marginBottom="size-300">
+                <View backgroundColor="gray-100" padding="size-300" marginX="auto" borderRadius="medium" marginTop="size-600">
                     <Heading level={3}>Trip Planner</Heading>
                     <Divider marginBottom="size-200"/>
                     <Flex gap="size-100" direction="column" width="size-6000">
@@ -255,7 +264,6 @@ const TripPlanner: React.FC = () => {
                             shouldFlip={true}
                             menuTrigger="input"
                             width="100%"
-
                         >
                             {(item) => <Item key={item.id}>{item.name}</Item>}
                         </ComboBox>
@@ -279,7 +287,6 @@ const TripPlanner: React.FC = () => {
                             {(item) => <Item key={item.id}>{item.name}</Item>}
                         </ComboBox>
 
-
                         <DatePicker
                             label="Select a Date"
                             value={selectedDate}
@@ -287,7 +294,6 @@ const TripPlanner: React.FC = () => {
                             width="100%"
                             marginTop="size-200"
                         />
-
 
                         {/* Plan Trip Button */}
                         <Button variant="accent" isPending={isLoading} onPress={HandlePlanTripButton}>
@@ -309,14 +315,10 @@ const TripPlanner: React.FC = () => {
                                          const selectedTrip = trips.find(trip => trip.id === selectedKey);
                                          setTripDetails(selectedTrip || null);
                                          setShowTripDetails(true);
-
-                                     }}
-
-                            >
+                                     }}>
                                 {(item) => (
                                     <Item key={item.id}>
-                                        <Text
-                                            justifySelf="start"> {item.legs.map(leg => leg.routeShortName).join(' • ')}</Text>
+                                        <Text justifySelf="start"> {item.legs.map(leg => leg.routeShortName).join(' • ')}</Text>
                                         <Text justifySelf="end">{item.duration / 60} min </Text>
                                     </Item>
                                 )}
@@ -325,7 +327,8 @@ const TripPlanner: React.FC = () => {
                     </View>
                 )}
             </Flex>
-            <Flex direction="column" justifyContent="center">
+
+            <Flex direction="column" justifyContent="center" marginTop="size-300">
                 {/* Display Trip Details */}
                 {showTripDetails && (
                     <View backgroundColor="gray-100" padding="size-300" borderRadius="medium" width="size-6000"
@@ -356,9 +359,8 @@ const TripPlanner: React.FC = () => {
                     </View>
                 )}
             </Flex>
-
-
         </Flex>
+
 
 
     );
