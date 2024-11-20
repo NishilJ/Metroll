@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { updateProfile, updateEmail, updatePassword, sendEmailVerification } from 'firebase/auth';
-import { auth } from '../firebaseconfig';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebaseconfig';
 import {
   Button,
   TextField,
@@ -9,7 +10,8 @@ import {
   Flex,
   Divider,
   Provider,
-  defaultTheme
+  defaultTheme,
+  Content
 } from '@adobe/react-spectrum';
 
 const AccountPage: React.FC = () => {
@@ -18,13 +20,34 @@ const AccountPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
+  // Additional state for displaying current Firestore values
+  const [currentFirstName, setCurrentFirstName] = useState<string>('');
+  const [currentLastName, setCurrentLastName] = useState<string>('');
+  const [currentEmail, setCurrentEmail] = useState<string>('');
+
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
       // Populate fields with the current user data
-      setFirstName(user.displayName?.split(' ')[0] || '');
-      setLastName(user.displayName?.split(' ')[1] || '');
+      const displayName = user.displayName || '';
+      const [first, last] = displayName.split(' ');
+      setFirstName(first || '');
+      setLastName(last || '');
       setEmail(user.email || '');
+
+      // Fetch and display current Firestore values
+      const fetchUserData = async () => {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setCurrentFirstName(data.firstName || '');
+          setCurrentLastName(data.lastName || '');
+          setCurrentEmail(data.email || '');
+        }
+      };
+
+      fetchUserData();
     }
   }, []);
 
@@ -33,12 +56,14 @@ const AccountPage: React.FC = () => {
     if (user) {
       try {
         // Update display name
-        await updateProfile(user, {
-          displayName: `${firstName} ${lastName}`
-        });
+        if (firstName && lastName) {
+          await updateProfile(user, {
+            displayName: `${firstName} ${lastName}`
+          });
+        }
 
         // Update email
-        if (email !== user.email) {
+        if (email && email !== user.email) {
           await updateEmail(user, email);
           await sendEmailVerification(user);
         }
@@ -54,6 +79,8 @@ const AccountPage: React.FC = () => {
         console.error("Error updating account information:", error);
         alert((error as Error).message);
       }
+    } else {
+      alert("No user is logged in.");
     }
   };
 
@@ -88,6 +115,17 @@ const AccountPage: React.FC = () => {
             />
             <Button variant="cta" onPress={handleUpdate}>Update</Button>
           </Flex>
+
+          <Heading level={3} marginTop="size-400">Current Database Values</Heading>
+          <Content>
+            <strong>First Name:</strong> {currentFirstName}
+          </Content>
+          <Content>
+            <strong>Last Name:</strong> {currentLastName}
+          </Content>
+          <Content>
+            <strong>Email:</strong> {currentEmail}
+          </Content>
         </View>
       </Provider>
   );

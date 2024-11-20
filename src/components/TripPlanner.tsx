@@ -235,9 +235,9 @@ const TripPlanner: React.FC = () => {
     return (
         <Flex direction="row" gap="size-200" justifyContent="center">
             <Flex direction="column" justifyContent="space-between" gap="size-200">
-                <View backgroundColor="gray-50" padding="size-300" marginX="auto" borderRadius="medium">
+                <View backgroundColor="gray-100" padding="size-300" marginX="auto" borderRadius="medium">
                     <Heading level={3}>Trip Planner</Heading>
-                    <Divider marginBottom="size-200" />
+                    <Divider marginBottom="size-200"/>
                     <Flex gap="size-100" direction="column" width="size-6000">
                         {/* Start Location ComboBox */}
                         <ComboBox
@@ -298,9 +298,10 @@ const TripPlanner: React.FC = () => {
 
                 {/* Display Trip Suggestions */}
                 {showTrips && (
-                    <View backgroundColor="gray-50" padding="size-300" width="size-6000" marginX="auto" borderRadius="medium">
+                    <View backgroundColor="gray-100" padding="size-300" width="size-6000" marginX="auto"
+                          borderRadius="medium">
                         {error ? (
-                            <Text UNSAFE_style={{ color: 'red' }}>{error}</Text>
+                            <Text UNSAFE_style={{color: 'red'}}>{error}</Text>
                         ) : (
                             <ListBox aria-label="Trip Suggestions" items={trips} selectionMode="single"
                                      onSelectionChange={(key) => {
@@ -314,8 +315,9 @@ const TripPlanner: React.FC = () => {
                             >
                                 {(item) => (
                                     <Item key={item.id}>
-                                            <Text justifySelf="start"> {item.legs.map(leg => leg.routeShortName).join(' • ')}</Text>
-                                            <Text justifySelf="end">{item.duration / 60} min </Text>
+                                        <Text
+                                            justifySelf="start"> {item.legs.map(leg => leg.routeShortName).join(' • ')}</Text>
+                                        <Text justifySelf="end">{item.duration / 60} min </Text>
                                     </Item>
                                 )}
                             </ListBox>
@@ -326,28 +328,39 @@ const TripPlanner: React.FC = () => {
             <Flex direction="column" justifyContent="center">
                 {/* Display Trip Details */}
                 {showTripDetails && (
-                    <View backgroundColor="gray-100" padding="size-300" borderRadius="medium" width="size-6000" marginTop="size-300" maxHeight="size-8000" overflow="auto">
-                            <Content>
-                                <Heading level={4}>{fromPlace?.name} - {toPlace?.name}</Heading>
-                                <Text><strong>Duration:</strong> {formatDuration(Number(tripDetails?.duration))}</Text>
-                                <br/>
-                                <strong>Date:</strong> {formattedDate} {/* Display the selected date */}
-                                <Divider marginY="size-150" />
-                                {tripDetails?.legs.map((leg: Leg, legIndex: number) => (
-                                    <View marginBottom="size-200">
-                                        <Text>
-                                            <strong>{tripDetails.legs.length > 1 && (legIndex === 0 ? "START: " : legIndex === tripDetails.legs.length - 1 ? " END: " : "")}{leg.routeShortName}</strong>
-                                            <br/>{new Date(leg.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} to {new Date(leg.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            <br/>{leg.from.name} to {leg.to.name}
-                                        </Text>
-                                        <Divider size="S" marginTop="size-150" />
-                                    </View>
-                                ))}
-                            </Content>
+                    <View backgroundColor="gray-100" padding="size-300" borderRadius="medium" width="size-6000"
+                          marginTop="size-300" maxHeight="size-8000" overflow="auto">
+                        <Content>
+                            <Heading level={4}>{fromPlace?.name} - {toPlace?.name}</Heading>
+                            <Text><strong>Duration:</strong> {formatDuration(Number(tripDetails?.duration))}</Text>
+                            <br/>
+                            <strong>Date:</strong> {formattedDate} {/* Display the selected date */}
+                            <Divider marginY="size-150"/>
+                            {tripDetails?.legs.map((leg: Leg, legIndex: number) => (
+                                <View marginBottom="size-200">
+                                    <Text>
+                                        <strong>{tripDetails.legs.length > 1 && (legIndex === 0 ? "START: " : legIndex === tripDetails.legs.length - 1 ? " END: " : "")}{leg.routeShortName}</strong>
+                                        <br/>{new Date(leg.startTime).toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })} to {new Date(leg.endTime).toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })}
+                                        <br/>{leg.from.name} to {leg.to.name}
+                                    </Text>
+                                    <Divider size="S" marginTop="size-150"/>
+                                </View>
+                            ))}
+                        </Content>
                     </View>
                 )}
             </Flex>
+
+
         </Flex>
+
+
     );
 };
 

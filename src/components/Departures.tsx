@@ -15,6 +15,7 @@ import moment from 'moment-timezone';
 import { CalendarDateTime } from '@internationalized/date';
 import { Moment } from 'moment/moment';
 
+
 interface Stop {
     id: string;
     name: string;
@@ -23,6 +24,7 @@ interface Stop {
 }
 
 interface Departure {
+    name: string;
     routeShortName: string;
     headsign: string;
     place: {
@@ -41,19 +43,6 @@ const useStopSuggestions = () => {
     });
 };
 
-// Function to fetch stations near the user's location (NOT WORKING)
-const fetchNearbyStations = async (latitude: number, longitude: number) => {
-    try {
-        // need working API call for lat and lon lines
-        const res = await fetch(`http://motis.metroll.live/api/v1/stations?lat=${latitude}&lng=${longitude}`);
-        const data = await res.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching nearby stations:', error);
-        return [];
-    }
-};
-
 // Function to fetch departures for a given stop
 const fetchDepartures = async (stopId: string, time: string) => {
     const res = await fetch(
@@ -64,17 +53,27 @@ const fetchDepartures = async (stopId: string, time: string) => {
 };
 
 const Departures: React.FC = () => {
+    const [showDeparturesHeading, setShowDeparturesHeading] = useState(false);
+    const [loadingDepartures, setLoadingDepartures] = useState<boolean>(false);
     const [selectedStop, setSelectedStop] = useState<Stop | null>(null);
     const [departures, setDepartures] = useState<Departure[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [locationError, setLocationError] = useState<string | null>(null);
+    const [showFavoritesMenu, setShowFavoritesMenu] = useState(false); // State to toggle favorites menu
+    const [selectedFavoriteStop, setSelectedFavoriteStop] = useState<{ name: string } | null>(null);
+    const [favorites, setFavorites] = useState(() => {
+        const savedFavorites = localStorage.getItem('favorites');
+        return savedFavorites ? JSON.parse(savedFavorites) : [];
+    });
     const currentDate = new Date();
+    const [hasClickedGetDepartures, setHasClickedGetDepartures] = useState(false);
+
+    useEffect(() => {
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    }, [favorites]);
+
+
 
     // for favorites button/toggle
-    const [favoriteStops, setFavoriteStops] = useState<string[]>(() => {
-        const storedFavorites = localStorage.getItem('favoriteStops');
-        return storedFavorites ? JSON.parse(storedFavorites) : [];
-    });
 
     const [selectedDate, setSelectedDate] = useState(
         new CalendarDateTime(
@@ -88,7 +87,6 @@ const Departures: React.FC = () => {
         )
     );
 
-    const [showFavorites, setShowFavorites] = useState(false); // New state for toggling favorites display
     const stopSuggestions = useStopSuggestions();
 
 
@@ -104,47 +102,33 @@ const Departures: React.FC = () => {
         return moment.utc(time).tz('America/Chicago').format('MM/DD/YYYY hh:mm:ss A');
     };
 
-    //obtain user position (WORKING, look at console log for explanation)
-    const handleGetLocation = async () => {
-        console.log('Starting to get location...'); // Initial log to indicate function start
-
-        if (navigator.geolocation) {
-            console.log('Geolocation is supported by this browser.');
-
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    const { latitude, longitude } = position.coords;
-                    console.log('Geolocation success:', { latitude, longitude }); // Log coordinates
-
-                    try {
-                        const nearbyStations = await fetchNearbyStations(latitude, longitude);
-                        console.log('Fetched nearby stations:', nearbyStations); // Log fetched stations
-
-                        if (nearbyStations.length === 0) {
-                            console.log('No nearby stations found.'); // Log if no stations found
-                            setLocationError('No nearby stations found.');
-                        } else {
-                            setLocationError(null);
-                            setSelectedStop(nearbyStations[0] || null);
-                            console.log('Selected stop set to:', nearbyStations[0] || null); // Log selected stop
-                        }
-                    } catch (error) {
-                        console.error('Error fetching nearby stations:', error); // Log if fetching fails
-                        setLocationError('Failed to fetch nearby stations.');
-                    }
-                },
-                (err) => {
-                    console.error('Geolocation error:', err.message); // Log geolocation error
-                    setLocationError('Geolocation error: ' + err.message);
-                }
-            );
-        } else {
-            console.warn('Geolocation is not supported by this browser.'); // Log warning if unsupported
-            setLocationError('Geolocation is not supported by this browser.');
+/*
+// Validates the selected date and time
+    const validateDateAndTime = (): string | null => {
+        if (!selectedDate || !selectedDate.toString()) {
+            return 'Please select a valid date and time.';
         }
+
+        const formattedTime = moment(selectedDate.toString()).toISOString();
+        const currentTime = moment().subtract(30, 'minutes');
+        const selectedMoment = moment(formattedTime);
+
+        if (!selectedMoment.isValid()) {
+            return 'Invalid date/time entered.';
+        }
+        if (selectedMoment.isBefore(currentTime)) {
+            return 'Selected time is in the past. Please choose a future time.';
+        }
+        if (!isValidCustomDate(selectedMoment)) {
+            return 'Selected date is too far away. Please choose a closer time to today.';
+        }
+
+        return null; // No validation errors
     };
+*/
 
 
+// Main method to handle departure fetching
     // error handling for departure
     const handleGetDepartures = async () => {
         if (!selectedStop) {
@@ -152,6 +136,10 @@ const Departures: React.FC = () => {
             return;
         }
 
+
+        setLoadingDepartures(true); // Set loading state for departures
+        setHasClickedGetDepartures(true); // Mark that the button was clicked
+        setShowDeparturesHeading(true);
         if (!selectedDate || !selectedDate.toString()) {
             setError('Please select a valid date and time.');
             return;
@@ -179,44 +167,40 @@ const Departures: React.FC = () => {
         setError(null);
 
         try {
-            const departures = await fetchDepartures(selectedStop.id, formattedTime);
-            if (departures.length === 0) {
-                setError('No departures available for this stop.');
+            const departures1 = await fetchDepartures(selectedStop.id, formattedTime);
+            if (departures1.length === 0) {
+                setError('This stop does not exist.');
             } else {
-                setDepartures(departures);
+                setDepartures(departures1);
             }
         } catch (error) {
             setError('Failed to load departures.');
             console.error(error);
         }
+        finally{
+            setLoadingDepartures(false); // Reset loading state after fetch
+
+        }
     };
 
-    // Function to toggle favorite status with typed parameter
-    const toggleFavorite = (stopId: string) => {
-        setFavoriteStops((prevFavorites) => {
-            if (prevFavorites.includes(stopId)) {
-                return prevFavorites.filter((id) => id !== stopId); // Remove from favorites
-            } else {
-                return [...prevFavorites, stopId]; // Add to favorites
-            }
-        });
+
+    const handleFavoriteClick = (fav: string) => {
+        // Set the filterText to the selected favorite stop name
+        stopSuggestions.setFilterText(fav);
+
+        // Find the corresponding stop and set it as selected
+        const favoriteStop = stopSuggestions.items.find((item) => item.name === fav);
+        setSelectedStop(favoriteStop || null);
     };
 
-    useEffect(() => {
-        localStorage.setItem('favoriteStops', JSON.stringify(favoriteStops));
-    }, [favoriteStops]);
 
 
+    // Dynamically determine which stop to display
+    const outputStop = selectedFavoriteStop || selectedStop;
+    // Use departures if outputStop doesn't manage its own
+    const outputDepartures = departures;
 
-    const handleListFavorites = () => {
-        setShowFavorites((prevState) => !prevState); // Toggle the state to show/hide favorites
 
-        const favoriteStopNames = favoriteStops.map(stopId => {
-            const favoriteStop = stopSuggestions.items.find((item) => item.id === stopId);
-            return favoriteStop ? favoriteStop.name : '';
-        }).join(', ');
-
-    };
 
 
     return (
@@ -234,8 +218,10 @@ const Departures: React.FC = () => {
             >
                 <Flex direction="row" justifyContent="space-between" alignItems="center">
                     <Heading level={3}>Stop Departures</Heading>
-                    {/* Button placed next to the title */}
-                    <Button variant="secondary" onPress={handleListFavorites}>
+                    <Button
+                        variant="secondary"
+                        onPress={() => setShowFavoritesMenu((prev) => !prev)} // Toggle the favorites menu
+                    >
                         Toggle Favorites Menu
                     </Button>
                 </Flex>
@@ -254,9 +240,6 @@ const Departures: React.FC = () => {
                 </ComboBox>
                 <Flex direction="column" gap="size-200" marginTop={25}>
                     <Button variant="cta" onPress={handleGetDepartures}>Get Departures</Button>
-                    <Button variant="cta" onPress={handleGetLocation} width="100%" marginBottom="size-100" alignSelf={"center"}>
-                        Get Nearest Stops
-                    </Button>
                     <DatePicker
                         label="Select a Date"
                         value={selectedDate}
@@ -266,28 +249,33 @@ const Departures: React.FC = () => {
                     />
                 </Flex>
 
-                {/* Divider and Favorites section */}
-                {showFavorites && (
-                    <View padding="size-300">
+                {/* Conditional rendering for Favorites section */}
+                {showFavoritesMenu && (
+                    <View
+                        backgroundColor="gray-100"
+                        padding="size-300"
+                        borderRadius="medium"
+                        marginTop="size-200"
+                    >
                         <Heading level={4}>Favorites</Heading>
-                        <Divider marginBottom="size-800" />
-                        {favoriteStops.length === 0 ? (
-                            <Text>No favorite stops yet.</Text>
+                        <Divider marginBottom="size-200" />
+                        {favorites.length > 0 ? (
+                            favorites.map((fav: string, idx: number) => (
+                                <Button
+                                    key={idx}
+                                    onPress={() => {
+                                        // Automatically set the search input to the favorite stop
+                                        handleFavoriteClick(fav);  // Fetch departures automatically after selecting a favorite stop
+                                    }}
+                                    width="100%"
+                                    marginBottom="size-100"
+                                    variant="secondary"
+                                >
+                                    {fav}
+                                </Button>
+                            ))
                         ) : (
-                            favoriteStops.map((stopId) => {
-                                const favoriteStop = stopSuggestions.items.find((item) => item.id === stopId);
-
-                                return (
-                                    favoriteStop && (
-                                        <View key={favoriteStop.id} marginBottom="size-200" padding="size-200" backgroundColor="gray-200" borderRadius="medium">
-                                            <Text>
-                                                <strong>Favorites here:</strong>  <br />
-                                                {/* Add more information as needed */}
-                                            </Text>
-                                        </View>
-                                    )
-                                );
-                            })
+                            <Text>No favorites added yet.</Text>
                         )}
                     </View>
                 )}
@@ -305,44 +293,64 @@ const Departures: React.FC = () => {
                 marginX={25}
                 maxHeight="65vh"
             >
-                {/*regular react because spectrum is dumb w/ colored text*/}
-                {locationError && <Text UNSAFE_style={{ color: 'red' }}><strong>Error:</strong> {locationError}</Text>}
+                {/* Error handling and departures rendering */}
                 {error && <Text UNSAFE_style={{ color: 'red' }}><strong>Error:</strong> {error}</Text>}
 
-                {!error && !locationError && selectedStop && departures.length > 0 && (
-                    <>
-                        <Flex direction="row" justifyContent="space-between" alignItems="center" marginBottom="size-200">
-                            <Heading level={4}>
-                                Departures for: {selectedStop.name}
-                            </Heading>
-                            <Button
-                                variant="primary"
-                                onPress={() => toggleFavorite(selectedStop.id)}
-                                marginStart="size-200" // Adds space between the heading and button
-                                marginTop="0"          // Removes extra top margin
-                            >
-                                {favoriteStops.includes(selectedStop.id) ? 'Remove from Favorites' : 'Add to Favorites'}
-                            </Button>
-                        </Flex>
-                        <Divider marginBottom="size-200" />
-                        {departures.map((departure, idx) => {
-                            const arrivalTime = departure.place?.arrival;
-                            return (
-                                <View key={idx} marginBottom="size-200" padding="size-200" backgroundColor="gray-200" borderRadius="medium">
-                                    <Text>
-                                        <strong>Route:</strong> {departure.routeShortName} <br />
-                                        <strong>Headsign:</strong> {departure.headsign} <br />
-                                        <strong>Arrival Time:</strong> {arrivalTime ? formatTime(arrivalTime) : 'N/A'}
-                                    </Text>
-                                </View>
-                            );
-                        })}
-                    </>
+                {/* Base message or error message based on the state */}
+                {!stopSuggestions.filterText && !error && (
+                    <Text marginTop="size-200" UNSAFE_style={{ fontStyle: 'italic', color: 'gray' }}>
+                        Search a stop to find more information
+                    </Text>
+                )}
+
+                {/* Display "Loading departures..." or results */}
+                {loadingDepartures ? (
+                    <Text> </Text>
+                ) : (
+                    !error && outputStop && outputStop === selectedStop && outputDepartures.length > 0 && (
+                        <>
+                            <Flex direction="row" justifyContent="space-between" alignItems="center" marginBottom="size-200">
+                                {showDeparturesHeading && (
+                                    <Heading level={2} marginTop="size-200" UNSAFE_style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                                        Departure Information for Stop
+                                    </Heading>
+                                )}
+                                <Button
+                                    variant="primary"
+                                    onPress={() => {
+                                        if (favorites.includes(outputStop.name)) {
+                                            setFavorites(favorites.filter((fav: string) => fav !== outputStop.name));
+                                        } else {
+                                            setFavorites([...favorites, outputStop.name]);
+                                        }
+                                    }}
+                                    marginStart="size-200"
+                                    marginTop="0"
+                                >
+                                    {favorites.includes(outputStop.name) ? 'Remove from Favorites' : 'Add to Favorites'}
+                                </Button>
+                            </Flex>
+                            <Divider marginBottom="size-200" />
+                            {outputDepartures.map((selectedStop, idx) => {
+                                const arrivalTime = selectedStop.place?.arrival;
+
+                                return (
+                                    <View key={idx} marginBottom="size-200" padding="size-200" backgroundColor="gray-200" borderRadius="medium">
+                                        <Text>
+                                            <strong>Route:</strong> {selectedStop.routeShortName} <br />
+                                            <strong>Headsign:</strong> {selectedStop.headsign} <br />
+                                            <strong>Arrival Time:</strong> {arrivalTime ? formatTime(arrivalTime) : 'N/A'}
+                                        </Text>
+                                    </View>
+                                );
+                            })}
+                        </>
+                    )
                 )}
             </View>
         </Flex>
-
     );
-};
 
+
+};
 export default Departures;
