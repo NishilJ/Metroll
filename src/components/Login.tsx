@@ -13,13 +13,16 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     // Redirect if user is already logged in
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const isLoggedIn = onAuthStateChanged(auth, (user) => {
       if (user) {
         navigate('/'); // Redirect to homepage if authenticated
       }
     });
-    return () => unsubscribe(); // Cleanup listener on component unmount
-  }, [navigate]);
+
+    return () => isLoggedIn(); // Cleanup listener on component unmount
+    }, 
+      [navigate] 
+  );
 
   const handleLogin = async () => {
     try {
@@ -36,18 +39,11 @@ const Login: React.FC = () => {
     <Container maxWidth="xs" sx={{ mt: 4 }}>
       <Stack spacing={2} alignItems="center">
         <Typography variant="h5">Login</Typography>
-        <TextField
-          label="Email"
-          variant="outlined"
-          fullWidth
+        <TextField label="Email" variant="outlined" fullWidth
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <TextField
-          label="Password"
-          type="password"
-          variant="outlined"
-          fullWidth
+        <TextField label="Password" type="password" variant="outlined" fullWidth
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
