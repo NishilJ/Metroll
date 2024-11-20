@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Heading, MenuTrigger, ActionButton, Menu, Item, Text } from '@adobe/react-spectrum';
+import { Flex, Heading, MenuTrigger, ActionButton, Menu, Item} from '@adobe/react-spectrum';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { Key } from 'react';
 
@@ -47,7 +47,7 @@ const TopNavBar: React.FC = () => {
         <Flex margin="auto" justifyContent="space-between" alignItems="center" width="95%" height="100%">
         <Heading level={1}>Metroll</Heading>
         <Flex alignItems="center" gap="size-200">
-            {isLoggedIn && userName && <Text>Welcome, {userName}</Text>}
+            {isLoggedIn && userName && <Heading level={4}>Welcome, {userName}</Heading>}
             <MenuTrigger>
             <ActionButton>☰</ActionButton>
             <Menu onAction={handleMenuOptions}>
