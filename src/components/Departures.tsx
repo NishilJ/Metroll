@@ -59,13 +59,12 @@ const Departures: React.FC = () => {
     const [departures, setDepartures] = useState<Departure[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [showFavoritesMenu, setShowFavoritesMenu] = useState(false); // State to toggle favorites menu
-    const [selectedFavoriteStop, setSelectedFavoriteStop] = useState<{ name: string } | null>(null);
+    const [selectedFavoriteStop] = useState<{ name: string } | null>(null);
     const [favorites, setFavorites] = useState(() => {
         const savedFavorites = localStorage.getItem('favorites');
         return savedFavorites ? JSON.parse(savedFavorites) : [];
     });
     const currentDate = new Date();
-    const [hasClickedGetDepartures, setHasClickedGetDepartures] = useState(false);
 
     useEffect(() => {
         localStorage.setItem('favorites', JSON.stringify(favorites));
@@ -77,7 +76,7 @@ const Departures: React.FC = () => {
 
     const [selectedDate, setSelectedDate] = useState(
         new CalendarDateTime(
-            //default calander values
+            //default calender values
             currentDate.getFullYear(),
             currentDate.getMonth() + 1,
             currentDate.getDate(),
@@ -138,7 +137,7 @@ const Departures: React.FC = () => {
 
 
         setLoadingDepartures(true); // Set loading state for departures
-        setHasClickedGetDepartures(true); // Mark that the button was clicked
+        //setHasClickedGetDepartures(true); // Mark that the button was clicked
         setShowDeparturesHeading(true);
         if (!selectedDate || !selectedDate.toString()) {
             setError('Please select a valid date and time.');
@@ -305,7 +304,7 @@ const Departures: React.FC = () => {
 
                 {/* Display "Loading departures..." or results */}
                 {loadingDepartures ? (
-                    <Text> </Text>
+                    <Text>Loading Departures</Text>
                 ) : (
                     !error && outputStop && outputStop === selectedStop && outputDepartures.length > 0 && (
                         <>
