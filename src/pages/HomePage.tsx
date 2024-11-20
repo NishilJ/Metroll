@@ -24,17 +24,17 @@ const HomePage: React.FC = () => {
                 height="100vh"
                 gap="size-0"
             >
-                <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="header">
+                <View colorVersion={6} borderWidth="thin" backgroundColor="gray-200" gridArea="header">
                     <TopNavBar />
                 </View>
-                <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="subheader">
+                <View colorVersion={6} borderWidth="thin" backgroundColor="gray-200" gridArea="subheader">
                     <TransitBar onSelect={setSelectedView} />
                 </View>
-                <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="content">
+                <View colorVersion={6} borderWidth="thin" backgroundColor="gray-200" gridArea="content">
                     {selectedView === 'planner' && <TripPlanner />}
                     {selectedView === 'departures' && <Departures />}
                 </View>
-                <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="footer" />
+                <View colorVersion={6} borderWidth="thin" backgroundColor="gray-200" gridArea="footer" />
             </Grid>
         </Provider>
     );
