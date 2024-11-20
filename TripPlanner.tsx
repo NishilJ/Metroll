@@ -331,8 +331,15 @@ const TripPlanner: React.FC = () => {
             <Flex direction="column" justifyContent="center" marginTop="size-300">
                 {/* Display Trip Details */}
                 {showTripDetails && (
-                    <View backgroundColor="gray-100" padding="size-300" borderRadius="medium" width="size-6000"
-                          marginTop="size-300" maxHeight="size-8000" overflow="auto">
+                    <View
+                        backgroundColor="gray-100"
+                        padding="size-300"
+                        borderRadius="medium"
+                        width="size-6000"
+                        marginTop="size-300"
+                        maxHeight="size-6000" // Restrict the height of the box
+                        overflow="auto" // Enable scrolling if content overflows
+                    >
                         <Content>
                             <Heading level={4}>{fromPlace?.name} - {toPlace?.name}</Heading>
                             <Text><strong>Duration:</strong> {formatDuration(Number(tripDetails?.duration))}</Text>
@@ -340,16 +347,19 @@ const TripPlanner: React.FC = () => {
                             <strong>Date:</strong> {formattedDate} {/* Display the selected date */}
                             <Divider marginY="size-150"/>
                             {tripDetails?.legs.map((leg: Leg, legIndex: number) => (
-                                <View marginBottom="size-200">
+                                <View marginBottom="size-200" key={legIndex}>
                                     <Text>
-                                        <strong>{tripDetails.legs.length > 1 && (legIndex === 0 ? "START: " : legIndex === tripDetails.legs.length - 1 ? " END: " : "")}{leg.routeShortName}</strong>
-                                        <br/>{new Date(leg.startTime).toLocaleTimeString([], {
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })} to {new Date(leg.endTime).toLocaleTimeString([], {
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}
+                                        <strong>
+                                            {tripDetails.legs.length > 1 &&
+                                                (legIndex === 0
+                                                    ? "START: "
+                                                    : legIndex === tripDetails.legs.length - 1
+                                                        ? " END: "
+                                                        : "")}
+                                            {leg.routeShortName}
+                                        </strong>
+                                        <br/>
+                                        {new Date(leg.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} to {new Date(leg.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         <br/>{leg.from.name} to {leg.to.name}
                                     </Text>
                                     <Divider size="S" marginTop="size-150"/>
