@@ -19,13 +19,13 @@ const HomePage: React.FC = () => {
                 height="100vh"
                 gap="size-0"
             >
-                <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="header">
+                <View colorVersion={6} borderWidth="thin" borderColor="seafoam-100" backgroundColor="seafoam-900" gridArea="header">
                     <TopNavBar />
                 </View>
-                <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="content">
+                <View colorVersion={6} borderWidth="thin" borderColor="seafoam-100" backgroundColor="seafoam-900" gridArea="content">
                     <UpdateAccount />
                 </View>
-                <View colorVersion={6} borderWidth="thin" backgroundColor="orange-500" gridArea="footer" />
+                <View colorVersion={6} borderWidth="thin" borderColor="seafoam-100" backgroundColor="seafoam-900" gridArea="footer" />
             </Grid>
         </Provider>
     );

@@ -238,7 +238,9 @@ const Departures: React.FC = () => {
                     {(item) => <Item key={item.id}>{item.name}</Item>}
                 </ComboBox>
                 <Flex direction="column" gap="size-200" marginTop={25}>
-                    <Button variant="cta" onPress={handleGetDepartures}>Get Departures</Button>
+                    <Button variant="cta" UNSAFE_style={{
+                        backgroundColor: "#f68511",
+                    }} onPress={handleGetDepartures}>Get Departures</Button>
                     <DatePicker
                         label="Select a Date"
                         value={selectedDate}
@@ -316,6 +318,7 @@ const Departures: React.FC = () => {
                                 )}
                                 <Button
                                     variant="primary"
+
                                     onPress={() => {
                                         if (favorites.includes(outputStop.name)) {
                                             setFavorites(favorites.filter((fav: string) => fav !== outputStop.name));

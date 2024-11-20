@@ -45,9 +45,13 @@ const TopNavBar: React.FC = () => {
 
     return (
         <Flex margin="auto" justifyContent="space-between" alignItems="center" width="95%" height="100%">
-            <Heading level={1}>Metroll</Heading>
+            <Heading UNSAFE_style={{
+                color: "#cef7f3",
+            }} level={1}>metroll</Heading>
             <Flex alignItems="center" gap="size-200">
-                {isLoggedIn && userName && <Heading level={4}>Welcome, {userName}</Heading>}
+                {isLoggedIn && userName && <Heading UNSAFE_style={{
+                    color: "#cef7f3"
+                }} level={4}>Welcome, {userName}</Heading>}
                 <MenuTrigger>
                 <ActionButton>☰</ActionButton>
                 <Menu onAction={handleMenuOptions}>

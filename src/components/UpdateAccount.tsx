@@ -144,7 +144,9 @@ const UpdateAccount: React.FC = () => {
             value={reEnterPassword}
             onChange={setReEnterPassword}
           />
-          <Button variant="accent" onPress={handleUpdate}>
+          <Button variant="accent" UNSAFE_style={{
+            backgroundColor: "#f68511",
+          }} onPress={handleUpdate}>
             Update
           </Button>
         </Flex>

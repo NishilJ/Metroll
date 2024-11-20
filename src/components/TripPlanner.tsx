@@ -235,7 +235,7 @@ const TripPlanner: React.FC = () => {
     return (
         <Flex direction="row" gap="size-200" justifyContent="center">
             <Flex direction="column" justifyContent="space-between" gap="size-200">
-                <View backgroundColor="gray-100" padding="size-300" marginX="auto" borderRadius="medium">
+                <View colorVersion={6} backgroundColor="seafoam-100" padding="size-300" marginX="auto" borderRadius="medium">
                     <Heading level={3}>Trip Planner</Heading>
                     <Divider marginBottom="size-200"/>
                     <Flex gap="size-100" direction="column" width="size-6000">
@@ -290,7 +290,9 @@ const TripPlanner: React.FC = () => {
 
 
                         {/* Plan Trip Button */}
-                        <Button variant="accent" isPending={isLoading} onPress={HandlePlanTripButton}>
+                        <Button variant="accent" UNSAFE_style={{
+                            backgroundColor: "#f68511",
+                        }} isPending={isLoading} onPress={HandlePlanTripButton}>
                             Plan Trip
                         </Button>
                     </Flex>
