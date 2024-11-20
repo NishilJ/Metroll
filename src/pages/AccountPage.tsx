@@ -15,65 +15,55 @@ import {
   Provider,
   defaultTheme,
 } from "@adobe/react-spectrum";
-import { auth } from "../firebase/firebaseConfig";
+import { auth } from "../firebaseconfig";
+import { onAuthStateChanged } from "firebase/auth";
+
 
 const AccountPage: React.FC = () => {
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+  const [displayName, setDisplayName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [reEnterPassword, setReEnterPassword] = useState<string>("");
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setFirstName(user.displayName?.split(" ")[0] || "");
-      setLastName(user.displayName?.split(" ")[1] || "");
-      setEmail(user.email || "");
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setDisplayName(user.displayName || "");
+        setEmail(user.email || "");
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleUpdate = async () => {
     const user = auth.currentUser;
 
-    if (!firstName || !lastName) {
-      alert("Please enter both first and last names.");
-      return;
-    }
-
-    if (!email) {
-      alert("Please enter a valid email address.");
-      return;
-    }
-
-    if (!password) {
-      alert("Please enter a new password.");
-      return;
-    }
-
-    if (password !== reEnterPassword) {
-      alert("Passwords do not match. Please re-enter the password.");
-      return;
-    }
-
     if (user) {
       try {
-        if (`${firstName} ${lastName}` !== user.displayName) {
+        if (displayName !== user.displayName) {
           await updateProfile(user, {
-            displayName: `${firstName} ${lastName}`,
+            displayName: displayName,
           });
+          alert("Display name updated successfully!");
         }
 
-        if (email !== user.email) {
+        if (email !== user.email && email !== "" && email != null) {
           alert(
-            `A verification email has been sent to ${email}. Please verify it and then log back in to complete the update.`
+              `A verification email has been sent to ${email}. Please verify it and then log back in to complete the update.`
           );
           await sendEmailVerification(user);
+          await updateEmail(user, email);
           return;
         }
+        if (password !== reEnterPassword) {
+          alert("Passwords do not match. Please re-enter the password.");
+        return;
+        }
+        if (password === reEnterPassword && password !== "" && password != null) {
+            await updatePassword(user, password);
+            alert("Password updated successfully!");
+          }
 
-        await updatePassword(user, password);
-        alert("Account updated successfully!");
       } catch (error) {
         console.error("Error updating account:", error);
         alert("An error occurred while updating the account.");
@@ -88,39 +78,31 @@ const AccountPage: React.FC = () => {
         <Divider marginBottom="size-300" />
         <Flex direction="column" gap="size-200">
           <TextField
-            label="First name"
-            value={firstName}
-            onChange={setFirstName}
-            placeholder={firstName || "Enter first name"}
-          />
-          <TextField
-            label="Last name"
-            value={lastName}
-            onChange={setLastName}
-            placeholder={lastName || "Enter last name"}
+            label="Display Name"
+            value={displayName}
+            onChange={setDisplayName}
+            placeholder={displayName}
           />
           <TextField
             label="Email address"
             type="email"
             value={email}
             onChange={setEmail}
-            placeholder={email || "Enter email address"}
+            placeholder={email}
           />
           <TextField
             label="New Password"
             type="password"
             value={password}
             onChange={setPassword}
-            isRequired
           />
           <TextField
             label="Re-enter Password"
             type="password"
             value={reEnterPassword}
             onChange={setReEnterPassword}
-            isRequired
           />
-          <Button variant="cta" onPress={handleUpdate}>
+          <Button variant="accent" onPress={handleUpdate}>
             Update
           </Button>
         </Flex>
