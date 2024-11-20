@@ -15,7 +15,6 @@ import {
   Provider,
   defaultTheme,
 } from "@adobe/react-spectrum";
-
 import { auth } from "../firebase/firebaseConfig";
 
 const AccountPage: React.FC = () => {
@@ -23,6 +22,7 @@ const AccountPage: React.FC = () => {
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [reEnterPassword, setReEnterPassword] = useState<string>("");
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -51,6 +51,11 @@ const AccountPage: React.FC = () => {
       return;
     }
 
+    if (password !== reEnterPassword) {
+      alert("Passwords do not match. Please re-enter the password.");
+      return;
+    }
+
     if (user) {
       try {
         if (`${firstName} ${lastName}` !== user.displayName) {
@@ -60,12 +65,15 @@ const AccountPage: React.FC = () => {
         }
 
         if (email !== user.email) {
-          await updateEmail(user, email);
+          alert(
+            `A verification email has been sent to ${email}. Please verify it and then log back in to complete the update.`
+          );
           await sendEmailVerification(user);
+          return;
         }
 
         await updatePassword(user, password);
-        alert("Account Updated!");
+        alert("Account updated successfully!");
       } catch (error) {
         console.error("Error updating account:", error);
         alert("An error occurred while updating the account.");
@@ -83,23 +91,33 @@ const AccountPage: React.FC = () => {
             label="First name"
             value={firstName}
             onChange={setFirstName}
+            placeholder={firstName || "Enter first name"}
           />
           <TextField
             label="Last name"
             value={lastName}
             onChange={setLastName}
+            placeholder={lastName || "Enter last name"}
           />
           <TextField
             label="Email address"
             type="email"
             value={email}
             onChange={setEmail}
+            placeholder={email || "Enter email address"}
           />
           <TextField
             label="New Password"
             type="password"
             value={password}
             onChange={setPassword}
+            isRequired
+          />
+          <TextField
+            label="Re-enter Password"
+            type="password"
+            value={reEnterPassword}
+            onChange={setReEnterPassword}
             isRequired
           />
           <Button variant="cta" onPress={handleUpdate}>
