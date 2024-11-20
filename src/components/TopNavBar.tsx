@@ -46,6 +46,7 @@ const TopNavBar: React.FC = () => {
     return (
         <Flex margin="auto" justifyContent="space-between" alignItems="center" width="95%" height="100%">
             <Heading UNSAFE_style={{
+                fontFamily: "'Poppins', sans-serif",
                 color: "#cef7f3",
             }} level={1}>metroll</Heading>
             <Flex alignItems="center" gap="size-200">
