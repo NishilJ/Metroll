@@ -51,6 +51,7 @@ const TopNavBar: React.FC = () => {
                 <MenuTrigger>
                 <ActionButton>☰</ActionButton>
                 <Menu onAction={handleMenuOptions}>
+                    <Item href="/" key="home">Home</Item>
                     {!isLoggedIn ? (
                     <Item href="/login" key="login">Login/Sign In</Item>
                     ) : (
@@ -59,8 +60,6 @@ const TopNavBar: React.FC = () => {
                         <Item key="signout">Sign Out</Item>
                     </>
                     )}
-                    <Item href="/" key="home">Home</Item>
-                    <Item href="/about" key="about">About</Item>
                 </Menu>
                 </MenuTrigger>
             </Flex>
